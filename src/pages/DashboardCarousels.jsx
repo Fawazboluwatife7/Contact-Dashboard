@@ -12,6 +12,7 @@ const DashboardCarousels = () => {
         slidesToScroll: 1,
         autoplay: true,
         autoplaySpeed: 8000,
+        pauseOnHover: false,
         responsive: [
             {
                 breakpoint: 1024,
