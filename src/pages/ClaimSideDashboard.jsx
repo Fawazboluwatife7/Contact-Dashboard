@@ -256,7 +256,7 @@ const ClaimSideDashboard = () => {
                 </div>
                 <div className="flex-1 bg-[#5f5f8c84] border-white h-[19rem] rounded-md items-center justify-center">
                     <div className="">
-                        <h1 className="text-white py-2 px-[7rem] text-[51px] pt-[3rem] underline ">
+                        <h1 className="text-white py-2 px-[7rem] text-[48px] pt-[3rem] underline ">
                             Total Batches Paid from 1st of January Till Date
                         </h1>
                         <h1 className="text-white py-2 text-[50px] px-[7rem]">

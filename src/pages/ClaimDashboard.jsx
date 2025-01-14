@@ -79,9 +79,6 @@ const ClaimDashboard = () => {
     }, []);
 
     async function getDashboardData() {
-        console.log(
-            `${apiUrl}/api/EnrolleeClaims/GetBatchSumaary?Fromdate=${startDate}&Todate=${endDate}&DateType=${dateType}`,
-        );
         const response = await fetch(
             `${apiUrl}/api/EnrolleeClaims/GetBatchSumaary?Fromdate=${startDate}&Todate=${endDate}&DateType=${dateType}`,
             {
