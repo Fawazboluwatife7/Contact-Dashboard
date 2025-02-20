@@ -114,8 +114,18 @@ const ClaimsDashboard = () => {
     async function getDashboardData(fromDate, toDate) {
         console.log("start", fromDate), console.log("end", toDate);
         // setIsLoading(true);
+        console.log(
+            "xxxb",
+            await fetch(
+                `${apiUrl}api/EnrolleeClaims/GetBatchSumaary?Fromdate=${fromDate}&Todate=${toDate}&DateType=${dateType}`,
+                {
+                    method: "GET",
+                },
+            ),
+        );
+
         const response = await fetch(
-            `${apiUrl}/api/EnrolleeClaims/GetBatchSumaary?Fromdate=${fromDate}&Todate=${toDate}&DateType=${dateType}`,
+            `${apiUrl}api/EnrolleeClaims/GetBatchSumaary?Fromdate=${fromDate}&Todate=${toDate}&DateType=${dateType}`,
             {
                 method: "GET",
             },
@@ -157,6 +167,7 @@ const ClaimsDashboard = () => {
                     item.BatchStatus.toLowerCase() === "quality assurance",
             );
 
+            console.log("adj", awaitingAdjudicationItems.length);
             setAdjudicated(adjudicatedItems.length);
             setAwaitingAdj(awaitingAdjudicationItems.length);
             setOpens(open.length);
@@ -374,7 +385,7 @@ const ClaimsDashboard = () => {
             // Set TAT values to state
             setClaimsOperationsTAT(claimsOperationsTAT?.toFixed(2));
             //setInternalControlTAT(internalControlTAT?.averageDays.toFixed(2));
-            setFinanceTAT(financeTAT?.averageDays?.toFixed(2));
+            setFinanceTAT(Math.round(financeTAT?.averageDays ?? 0));
 
             setTotalUnpaidClaimValue(formattedTotal);
 

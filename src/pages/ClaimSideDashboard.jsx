@@ -4,6 +4,7 @@ const ClaimSideDashboard = () => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
     const [lastMonthPaidClaims, setLastMonthPaidClaims] = useState("");
+    const [allFailedTransactions, setAllFailedTransactions] = useState("");
     const [currentMonthPaidClaims, setCurrentMonthPaidClaims] = useState("");
     const [thrirtyDaysPaidBatches, setThrirtyDaysPaidBatches] = useState("");
     const [totalPaidBatchesForTheYear, setTotalPaidBatchesForTheYear] =
@@ -25,6 +26,7 @@ const ClaimSideDashboard = () => {
         getLastMonthBatchTotal();
         getMonthlyCurrentPaidBatchTotal();
         getBatchTotalOfNewYear();
+        getBatchTotalOfAllFailedTransactions();
     }, []);
 
     async function getLastMonthBatchTotal() {
@@ -162,6 +164,24 @@ const ClaimSideDashboard = () => {
         console.log("payment req", tpaymentTotal);
         setThrirtyDaysPaidBatches(tpaymentTotal.toLocaleString("en-US"));
     }
+    async function getBatchTotalOfAllFailedTransactions() {
+        const response = await fetch(
+            `${apiUrl}/api/EnrolleeClaims/GetBatchSumaary_paymentreqErrorcode`,
+            {
+                method: "GET",
+            },
+        );
+        const data = await response.json();
+
+        const paymentItems = data.result.reduce(
+            (sum, item) => sum + item.BatchTotal,
+            0,
+        );
+
+        console.log("amount of failed transaction", paymentItems);
+
+        setAllFailedTransactions(paymentItems.toLocaleString("en-US"));
+    }
 
     async function getBatchTotalOfNewYear() {
         const today = new Date();
@@ -204,6 +224,7 @@ const ClaimSideDashboard = () => {
                 getMonthlyCurrentPaidBatchTotal();
                 getBatchTotalOfTheLastThirtyDays();
                 getBatchTotalOfNewYear();
+                getBatchTotalOfAllFailedTransactions();
             },
             30 * 60 * 1000,
         );
@@ -246,20 +267,30 @@ const ClaimSideDashboard = () => {
             <div className="flex w-full pt-3 gap-3 rounded-md px-3 justify-center mt-2">
                 <div className="flex-1 bg-[#5f5f8c84] border-white h-[19rem] rounded-md items-center justify-center">
                     <div>
-                        <h1 className="text-white py-4 [7rem] px-[7rem] text-[51px] pt-[3rem] underline">
-                            Total amount in Payment Requisition
+                        <h1 className="text-white py-4 [7rem] px-[2rem] text-[39px] pt-[3rem] underline">
+                            Total Amount in Payment Requisition
                         </h1>
-                        <h1 className="text-white py-2 px-[7rem] text-[50px]">
+                        <h1 className="text-white py-2 px-[2rem] text-[45px]">
                             #{thrirtyDaysPaidBatches}
                         </h1>
                     </div>
                 </div>
                 <div className="flex-1 bg-[#5f5f8c84] border-white h-[19rem] rounded-md items-center justify-center">
+                    <div>
+                        <h1 className="text-white py-4 [7rem] px-[2rem] text-[42px] pt-[3rem] underline">
+                            Total Amount of Failed Transactions
+                        </h1>
+                        <h1 className="text-white py-2 px-[2rem] text-[45px]">
+                            #{allFailedTransactions}
+                        </h1>
+                    </div>
+                </div>
+                <div className="flex-1 bg-[#5f5f8c84] border-white h-[19rem] rounded-md items-center justify-center">
                     <div className="">
-                        <h1 className="text-white py-2 px-[7rem] text-[48px] pt-[3rem] underline ">
+                        <h1 className="text-white py-2 px-[2rem] text-[38px] pt-[3rem] underline ">
                             Total Batches Paid from 1st of January Till Date
                         </h1>
-                        <h1 className="text-white py-2 text-[50px] px-[7rem]">
+                        <h1 className="text-white py-2 text-[45px] px-[2rem]">
                             #{totalPaidBatchesForTheYear}
                         </h1>
                     </div>
