@@ -1403,7 +1403,7 @@ const ClaimsDashboard = () => {
                         </div>
                     </div>
                 </div>
-                <div className="flex-1 bg-bl  bg-[#5f5f8c84] border-white h-[20rem] rounded-md">
+                <div className="flex-1 bg-bl  bg-[#5f5f8c84] border-white h-[20rem]">
                     <div className="">
                         <div className="">
                             <h1 className="  text-white  py-2 px-3 text-[30px] underline">

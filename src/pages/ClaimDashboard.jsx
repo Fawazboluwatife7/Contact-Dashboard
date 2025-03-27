@@ -123,7 +123,7 @@ const ClaimDashboard = () => {
                 );
 
                 const uniqueMemberNumbers = new Set(
-                    PendingPA.map((item) => item.MembernUmber),
+                    PendingPA.map((item) => item.MemberNumber),
                 );
 
                 const uniqueMemberCount = uniqueMemberNumbers.size;
@@ -136,7 +136,7 @@ const ClaimDashboard = () => {
                 );
 
                 const uniqueMember = new Set(
-                    PendingPATwo.map((item) => item.MembernUmber),
+                    PendingPATwo.map((item) => item.MemberNumber),
                 );
 
                 const uniqueMembercc = uniqueMember.size;
