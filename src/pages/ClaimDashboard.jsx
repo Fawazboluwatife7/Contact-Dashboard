@@ -21,6 +21,7 @@ const ClaimDashboard = () => {
     const [openPATwo, setOpenPATwo] = useState([]);
     const combinedOpenPA = [...openPAOne, ...openPATwo];
     const [totalPA, TotalPA] = useState("");
+    const [paAboveSevenMinutes, setPaAboveSevenMinutes] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [showAll, setShowAll] = useState(false);
@@ -133,6 +134,43 @@ const ClaimDashboard = () => {
                 const PendingPATwo = filteredData.filter(
                     (item) =>
                         item.PAStatus.toLowerCase() === "authorisation pending",
+                );
+
+                const pendingPACountAboveSevenMinutes = filteredData.filter(
+                    (item) => {
+                        if (!item.DateIssued || !item.ApprovedTime)
+                            return false;
+
+                        // Ensure the PAStatus is "authorization pending" or "authorisation pending"
+                        const isPendingPA = [
+                            "authorization pending",
+                            "authorisation pending",
+                        ].includes(item.PAStatus.toLowerCase());
+                        if (!isPendingPA) return false; // Skip non-pending PA records
+
+                        // Convert dates and calculate time difference
+                        const dateIssued = new Date(item.DateIssued);
+                        const [approvedHours, approvedMinutes] =
+                            item.ApprovedTime.split(":").map(Number);
+                        const approvedDate = new Date(dateIssued);
+                        approvedDate.setHours(
+                            approvedHours,
+                            approvedMinutes,
+                            0,
+                            0,
+                        );
+                        const timeDifference = Math.floor(
+                            (approvedDate - dateIssued) / 60000,
+                        );
+
+                        return timeDifference > 7;
+                    },
+                ).length;
+
+                setPaAboveSevenMinutes(pendingPACountAboveSevenMinutes);
+
+                console.log(
+                    `Total Pending PA Records Above 7 Minutes: ${pendingPACountAboveSevenMinutes}`,
                 );
 
                 const uniqueMember = new Set(
@@ -276,16 +314,14 @@ const ClaimDashboard = () => {
                                     {""} {"/"} {peopleWaiting}
                                 </h1>
                             </div>
-                            {/* <div className=" flex-1 bg-bl bg-[#5f5f8c84] w-full h-[17.5rem] rounded-md py-4 px-4">
+                            <div className=" flex-1 bg-bl bg-[#5f5f8c84] w-full h-[17.5rem] rounded-md py-4 px-4">
                                 <p className="text-white text-[35px]">
-                                    Open Tickets/ number of enrolles
+                                    Pending PA Above Seven Minutes
                                 </p>
                                 <h1 className="text-[80px] font-bold ">
-                                    {AuthorisationPending +
-                                        AuthorizationPending}{" "}
-                                    {""} {"/"} {peopleWaiting}
+                                    {paAboveSevenMinutes}
                                 </h1>
-                            </div> */}
+                            </div>
                         </div>
                     </div>
                     <div className=" w-full flex gap-2 mt-4">
