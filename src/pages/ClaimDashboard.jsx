@@ -136,17 +136,24 @@ const ClaimDashboard = () => {
                         item.PAStatus.toLowerCase() === "authorisation pending",
                 );
 
-                const pendingPACountAboveSevenMinutes = filteredData.filter(
-                    (item) => {
-                        if (!item.DateIssued || !item.ApprovedTime)
-                            return false;
+                const getPendingPATimeExceedingSevenMinutes = (
+                    filteredData,
+                ) => {
+                    const exceedingTimeItems = [];
 
+                    filteredData.forEach((item) => {
                         // Ensure the PAStatus is "authorization pending" or "authorisation pending"
-                        const isPendingPA = [
-                            "authorization pending",
-                            "authorisation pending",
-                        ].includes(item.PAStatus.toLowerCase());
-                        if (!isPendingPA) return false; // Skip non-pending PA records
+                        const isPendingPA = item.PAStatus
+                            ? [
+                                  "authorization pending",
+                                  "authorisation pending",
+                              ].includes(item.PAStatus.toLowerCase().trim())
+                            : false;
+
+                        if (!isPendingPA) return;
+
+                        // Check if DateIssued and ApprovedTime exist
+                        if (!item.DateIssued || !item.ApprovedTime) return;
 
                         // Convert dates and calculate time difference
                         const dateIssued = new Date(item.DateIssued);
@@ -159,19 +166,34 @@ const ClaimDashboard = () => {
                             0,
                             0,
                         );
+
                         const timeDifference = Math.floor(
-                            (approvedDate - dateIssued) / 60000,
+                            (approvedDate - dateIssued) / 60000, // Convert to minutes
                         );
 
-                        return timeDifference > 7;
-                    },
-                ).length;
+                        // If time difference is above 7 minutes, add to list
+                        if (timeDifference > 7) {
+                            exceedingTimeItems.push({
+                                ...item,
+                                timeDifference: timeDifference,
+                            });
+                        }
+                    });
 
-                setPaAboveSevenMinutes(pendingPACountAboveSevenMinutes);
+                    return {
+                        items: exceedingTimeItems,
+                        totalItems: exceedingTimeItems.length,
+                    };
+                };
 
+                // Usage
+                const pendingPATimeExceeding =
+                    getPendingPATimeExceedingSevenMinutes(filteredData);
                 console.log(
-                    `Total Pending PA Records Above 7 Minutes: ${pendingPACountAboveSevenMinutes}`,
+                    "Items exceeding 7 minutes:",
+                    pendingPATimeExceeding.items,
                 );
+                setPaAboveSevenMinutes(pendingPATimeExceeding.totalItems);
 
                 const uniqueMember = new Set(
                     PendingPATwo.map((item) => item.MemberNumber),
