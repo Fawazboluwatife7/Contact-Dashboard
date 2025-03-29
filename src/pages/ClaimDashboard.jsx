@@ -17,6 +17,8 @@ const ClaimDashboard = () => {
     ] = useState([]);
     const [AuthorizationPending, setAuthorizationPending] = useState([]);
     const [AuthorisationPending, setAuthorisationPending] = useState([]);
+    const [exceedingTimeItems, setExceedingTimeItems] = useState([]);
+    const [totalExceedingItems, setTotalExceedingItems] = useState(0);
     const [openPAOne, setOpenPAOne] = useState([]);
     const [openPATwo, setOpenPATwo] = useState([]);
     const combinedOpenPA = [...openPAOne, ...openPATwo];
@@ -136,6 +138,69 @@ const ClaimDashboard = () => {
                         item.PAStatus.toLowerCase() === "authorisation pending",
                 );
 
+                // const getPendingPATimeExceedingSevenMinutes = (
+                //     filteredData,
+                // ) => {
+                //     const exceedingTimeItems = [];
+
+                //     filteredData.forEach((item) => {
+                //         // Ensure the PAStatus is "authorization pending" or "authorisation pending"
+                //         const isPendingPA = item.PAStatus
+                //             ? [
+                //                   "authorization pending",
+                //                   "authorisation pending",
+                //               ].includes(item.PAStatus.toLowerCase().trim())
+                //             : false;
+
+                //         if (!isPendingPA) return;
+
+                //         // Check if DateIssued and ApprovedTime exist
+                //         if (!item.DateIssued || !item.ApprovedTime) return;
+
+                //         // Convert dates and calculate time difference
+                //         const dateIssued = new Date(item.DateIssued);
+                //         const [approvedHours, approvedMinutes] =
+                //             item.ApprovedTime.split(":").map(Number);
+                //         const approvedDate = new Date(dateIssued);
+                //         approvedDate.setHours(
+                //             approvedHours,
+                //             approvedMinutes,
+                //             0,
+                //             0,
+                //         );
+
+                //         const timeDifference = Math.floor(
+                //             (approvedDate - dateIssued) / 60000, // Convert to minutes
+                //         );
+
+                //         // If time difference is above 7 minutes, add to list
+                //         if (timeDifference > 7) {
+                //             exceedingTimeItems.push({
+                //                 ...item,
+                //                 timeDifference: timeDifference,
+                //             });
+                //         }
+                //     });
+
+                //     return {
+                //         items: exceedingTimeItems,
+                //         totalItems: exceedingTimeItems.length,
+                //     };
+                // };
+
+                // Usage
+                // const pendingPATimeExceeding =
+                //     getPendingPATimeExceedingSevenMinutes(filteredData);
+                // console.log(
+                //     "Items exceeding 7 minutes:",
+                //     pendingPATimeExceeding.items,
+                // );
+                // console.log(
+                //     "Items exceeding 7 length:",
+                //     pendingPATimeExceeding.items,
+                // );
+                // setPaAboveSevenMinutes(pendingPATimeExceeding.totalItems);
+
                 const getPendingPATimeExceedingSevenMinutes = (
                     filteredData,
                 ) => {
@@ -152,23 +217,17 @@ const ClaimDashboard = () => {
 
                         if (!isPendingPA) return;
 
-                        // Check if DateIssued and ApprovedTime exist
-                        if (!item.DateIssued || !item.ApprovedTime) return;
+                        // Check if DateIssued and approveddatetime exist
+                        if (!item.DateIssued || !item.approveddatetime) return;
 
                         // Convert dates and calculate time difference
                         const dateIssued = new Date(item.DateIssued);
-                        const [approvedHours, approvedMinutes] =
-                            item.ApprovedTime.split(":").map(Number);
-                        const approvedDate = new Date(dateIssued);
-                        approvedDate.setHours(
-                            approvedHours,
-                            approvedMinutes,
-                            0,
-                            0,
+                        const approvedDateTime = new Date(
+                            item.approveddatetime,
                         );
 
                         const timeDifference = Math.floor(
-                            (approvedDate - dateIssued) / 60000, // Convert to minutes
+                            (approvedDateTime - dateIssued) / 60000, // Convert to minutes
                         );
 
                         // If time difference is above 7 minutes, add to list
@@ -180,20 +239,24 @@ const ClaimDashboard = () => {
                         }
                     });
 
+                    // Console log the results
+                    console.log("Exceeding Time Items:", exceedingTimeItems);
+                    console.log(
+                        "Total Exceeding Items:",
+                        exceedingTimeItems.length,
+                    );
+
                     return {
                         items: exceedingTimeItems,
                         totalItems: exceedingTimeItems.length,
                     };
                 };
 
-                // Usage
-                const pendingPATimeExceeding =
+                const result =
                     getPendingPATimeExceedingSevenMinutes(filteredData);
-                console.log(
-                    "Items exceeding 7 minutes:",
-                    pendingPATimeExceeding.items,
-                );
-                setPaAboveSevenMinutes(pendingPATimeExceeding.totalItems);
+
+                setExceedingTimeItems(result.items);
+                setTotalExceedingItems(result.totalItems);
 
                 const uniqueMember = new Set(
                     PendingPATwo.map((item) => item.MemberNumber),
@@ -341,7 +404,7 @@ const ClaimDashboard = () => {
                                     Pending PA Above Seven Minutes
                                 </p>
                                 <h1 className="text-[80px] font-bold ">
-                                    {paAboveSevenMinutes}
+                                    {totalExceedingItems}
                                 </h1>
                             </div>
                         </div>
