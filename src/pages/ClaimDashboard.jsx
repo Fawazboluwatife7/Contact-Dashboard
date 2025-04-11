@@ -108,191 +108,181 @@ const ClaimDashboard = () => {
 
             TotalPA(data.result.length);
 
-            if (data.status === 200) {
-                const validStatuses = [
-                    "Authorization Pending",
-                    "Authorisation pending",
-                    "Authorisation approved claim pending",
-                    "Declined",
-                ];
+            const validStatuses = [
+                "Authorization Pending",
+                "Authorisation pending",
+                "Approved",
+                "Declined",
+            ];
 
-                const filteredData = data.result.filter((item) =>
-                    validStatuses.includes(item.PAStatus),
+            const filteredData = data.result.filter((item) =>
+                validStatuses.includes(item.PAStatus),
+            );
+
+            const PendingPA = filteredData.filter(
+                (item) =>
+                    item.PAStatus.toLowerCase() === "authorization pending",
+            );
+
+            console.log("pending", PendingPA);
+
+            const uniqueMemberNumbers = new Set(
+                PendingPA.map((item) => item.MemberNumber),
+            );
+
+            const uniqueMemberCount = uniqueMemberNumbers.size;
+
+            console.log("count", uniqueMemberCount);
+
+            const PendingPATwo = filteredData.filter(
+                (item) =>
+                    item.PAStatus.toLowerCase() === "authorisation pending",
+            );
+
+            // const getPendingPATimeExceedingSevenMinutes = (
+            //     filteredData,
+            // ) => {
+            //     const exceedingTimeItems = [];
+
+            //     filteredData.forEach((item) => {
+            //         // Ensure the PAStatus is "authorization pending" or "authorisation pending"
+            //         const isPendingPA = item.PAStatus
+            //             ? [
+            //                   "authorization pending",
+            //                   "authorisation pending",
+            //               ].includes(item.PAStatus.toLowerCase().trim())
+            //             : false;
+
+            //         if (!isPendingPA) return;
+
+            //         // Check if DateIssued and ApprovedTime exist
+            //         if (!item.DateIssued || !item.ApprovedTime) return;
+
+            //         // Convert dates and calculate time difference
+            //         const dateIssued = new Date(item.DateIssued);
+            //         const [approvedHours, approvedMinutes] =
+            //             item.ApprovedTime.split(":").map(Number);
+            //         const approvedDate = new Date(dateIssued);
+            //         approvedDate.setHours(
+            //             approvedHours,
+            //             approvedMinutes,
+            //             0,
+            //             0,
+            //         );
+
+            //         const timeDifference = Math.floor(
+            //             (approvedDate - dateIssued) / 60000, // Convert to minutes
+            //         );
+
+            //         // If time difference is above 7 minutes, add to list
+            //         if (timeDifference > 7) {
+            //             exceedingTimeItems.push({
+            //                 ...item,
+            //                 timeDifference: timeDifference,
+            //             });
+            //         }
+            //     });
+
+            //     return {
+            //         items: exceedingTimeItems,
+            //         totalItems: exceedingTimeItems.length,
+            //     };
+            // };
+
+            // Usage
+            // const pendingPATimeExceeding =
+            //     getPendingPATimeExceedingSevenMinutes(filteredData);
+            // console.log(
+            //     "Items exceeding 7 minutes:",
+            //     pendingPATimeExceeding.items,
+            // );
+            // console.log(
+            //     "Items exceeding 7 length:",
+            //     pendingPATimeExceeding.items,
+            // );
+            // setPaAboveSevenMinutes(pendingPATimeExceeding.totalItems);
+
+            const getPendingPATimeExceedingSevenMinutes = (filteredData) => {
+                const exceedingTimeItems = [];
+
+                filteredData.forEach((item) => {
+                    // Ensure the PAStatus is "authorization pending" or "authorisation pending"
+                    const isPendingPA = item.PAStatus
+                        ? [
+                              "authorization pending",
+                              "authorisation pending",
+                          ].includes(item.PAStatus.toLowerCase().trim())
+                        : false;
+
+                    if (!isPendingPA) return;
+
+                    // Check if DateIssued exists
+                    if (!item.DateIssued) return;
+
+                    // Convert DateIssued to Date object
+                    const dateIssued = new Date(item.DateIssued);
+                    const now = new Date();
+
+                    const timeDifference = Math.floor(
+                        (now - dateIssued) / 60000,
+                    ); // in minutes
+
+                    // If time difference is more than 7 minutes
+                    if (timeDifference > 7) {
+                        exceedingTimeItems.push({
+                            ...item,
+                            timeDifference,
+                        });
+                    }
+                });
+
+                console.log("Exceeding Time Items:", exceedingTimeItems);
+                console.log(
+                    "Total Exceeding Items:",
+                    exceedingTimeItems.length,
                 );
 
-                const PendingPA = filteredData.filter(
-                    (item) =>
-                        item.PAStatus.toLowerCase() === "authorization pending",
-                );
-
-                const uniqueMemberNumbers = new Set(
-                    PendingPA.map((item) => item.MemberNumber),
-                );
-
-                const uniqueMemberCount = uniqueMemberNumbers.size;
-
-                console.log("count", uniqueMemberCount);
-
-                const PendingPATwo = filteredData.filter(
-                    (item) =>
-                        item.PAStatus.toLowerCase() === "authorisation pending",
-                );
-
-                // const getPendingPATimeExceedingSevenMinutes = (
-                //     filteredData,
-                // ) => {
-                //     const exceedingTimeItems = [];
-
-                //     filteredData.forEach((item) => {
-                //         // Ensure the PAStatus is "authorization pending" or "authorisation pending"
-                //         const isPendingPA = item.PAStatus
-                //             ? [
-                //                   "authorization pending",
-                //                   "authorisation pending",
-                //               ].includes(item.PAStatus.toLowerCase().trim())
-                //             : false;
-
-                //         if (!isPendingPA) return;
-
-                //         // Check if DateIssued and ApprovedTime exist
-                //         if (!item.DateIssued || !item.ApprovedTime) return;
-
-                //         // Convert dates and calculate time difference
-                //         const dateIssued = new Date(item.DateIssued);
-                //         const [approvedHours, approvedMinutes] =
-                //             item.ApprovedTime.split(":").map(Number);
-                //         const approvedDate = new Date(dateIssued);
-                //         approvedDate.setHours(
-                //             approvedHours,
-                //             approvedMinutes,
-                //             0,
-                //             0,
-                //         );
-
-                //         const timeDifference = Math.floor(
-                //             (approvedDate - dateIssued) / 60000, // Convert to minutes
-                //         );
-
-                //         // If time difference is above 7 minutes, add to list
-                //         if (timeDifference > 7) {
-                //             exceedingTimeItems.push({
-                //                 ...item,
-                //                 timeDifference: timeDifference,
-                //             });
-                //         }
-                //     });
-
-                //     return {
-                //         items: exceedingTimeItems,
-                //         totalItems: exceedingTimeItems.length,
-                //     };
-                // };
-
-                // Usage
-                // const pendingPATimeExceeding =
-                //     getPendingPATimeExceedingSevenMinutes(filteredData);
-                // console.log(
-                //     "Items exceeding 7 minutes:",
-                //     pendingPATimeExceeding.items,
-                // );
-                // console.log(
-                //     "Items exceeding 7 length:",
-                //     pendingPATimeExceeding.items,
-                // );
-                // setPaAboveSevenMinutes(pendingPATimeExceeding.totalItems);
-
-                const getPendingPATimeExceedingSevenMinutes = (
-                    filteredData,
-                ) => {
-                    const exceedingTimeItems = [];
-
-                    filteredData.forEach((item) => {
-                        // Ensure the PAStatus is "authorization pending" or "authorisation pending"
-                        const isPendingPA = item.PAStatus
-                            ? [
-                                  "authorization pending",
-                                  "authorisation pending",
-                              ].includes(item.PAStatus.toLowerCase().trim())
-                            : false;
-
-                        if (!isPendingPA) return;
-
-                        // Check if DateIssued and approveddatetime exist
-                        if (!item.DateIssued || !item.approveddatetime) return;
-
-                        // Convert dates and calculate time difference
-                        const dateIssued = new Date(item.DateIssued);
-                        const approvedDateTime = new Date(
-                            item.approveddatetime,
-                        );
-
-                        const timeDifference = Math.floor(
-                            (approvedDateTime - dateIssued) / 60000, // Convert to minutes
-                        );
-
-                        // If time difference is above 7 minutes, add to list
-                        if (timeDifference > 7) {
-                            exceedingTimeItems.push({
-                                ...item,
-                                timeDifference: timeDifference,
-                            });
-                        }
-                    });
-
-                    // Console log the results
-                    console.log("Exceeding Time Items:", exceedingTimeItems);
-                    console.log(
-                        "Total Exceeding Items:",
-                        exceedingTimeItems.length,
-                    );
-
-                    return {
-                        items: exceedingTimeItems,
-                        totalItems: exceedingTimeItems.length,
-                    };
+                return {
+                    items: exceedingTimeItems,
+                    totalItems: exceedingTimeItems.length,
                 };
+            };
 
-                const result =
-                    getPendingPATimeExceedingSevenMinutes(filteredData);
+            const result = getPendingPATimeExceedingSevenMinutes(filteredData);
 
-                setExceedingTimeItems(result.items);
-                setTotalExceedingItems(result.totalItems);
+            setExceedingTimeItems(result.items);
+            setTotalExceedingItems(result.totalItems);
 
-                const uniqueMember = new Set(
-                    PendingPATwo.map((item) => item.MemberNumber),
-                );
+            const uniqueMember = new Set(
+                PendingPATwo.map((item) => item.MemberNumber),
+            );
 
-                const uniqueMembercc = uniqueMember.size;
+            const uniqueMembercc = uniqueMember.size;
 
-                console.log("counttwo", uniqueMembercc);
+            console.log("counttwo", uniqueMembercc);
 
-                setPeopleWaiting(uniqueMembercc + uniqueMemberCount);
+            setPeopleWaiting(uniqueMembercc + uniqueMemberCount);
 
-                const ClaimPending = filteredData.filter(
-                    (item) =>
-                        item.PAStatus.toLowerCase() ===
-                        "authorisation approved claim pending",
-                );
-                const DeclinedPA = filteredData.filter(
-                    (item) => item.PAStatus.toLowerCase() === "declined",
-                );
+            const ClaimPending = filteredData.filter(
+                (item) => item.PAStatus.toLowerCase() === "approved",
+            );
 
-                const allPendingPa = [...PendingPA, ...PendingPATwo];
-                setPendingPA(allPendingPa);
-                setOpenPAOne(PendingPA);
-                setOpenPATwo(PendingPATwo);
+            console.log("apporved", ClaimPending);
+            const DeclinedPA = filteredData.filter(
+                (item) => item.PAStatus.toLowerCase() === "declined",
+            );
 
-                setAuthorizationPending(PendingPA.length);
-                setAuthorisationPending(PendingPATwo.length);
-                setAuthorizationApprovedClaimPending(ClaimPending.length);
-                setDeclinedPA(DeclinedPA.length);
+            const allPendingPa = [...PendingPA, ...PendingPATwo];
+            setPendingPA(allPendingPa);
+            setOpenPAOne(PendingPA);
+            setOpenPATwo(PendingPATwo);
 
-                setAdjudicated(filteredData.length); // Fix: adjudicatedItems wasn't defined
-            } else {
-                console.error(
-                    "Failed to fetch data or unexpected response format.",
-                );
-            }
+            setAuthorizationPending(PendingPA.length);
+            setAuthorisationPending(PendingPATwo.length);
+            setAuthorizationApprovedClaimPending(ClaimPending.length);
+            setDeclinedPA(DeclinedPA.length);
+
+            setAdjudicated(filteredData.length); // Fix: adjudicatedItems wasn't defined
         } catch (error) {
             console.error("get pa:", error);
             setDailyPA([]);
