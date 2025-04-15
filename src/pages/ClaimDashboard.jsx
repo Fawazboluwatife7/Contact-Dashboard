@@ -33,6 +33,9 @@ const ClaimDashboard = () => {
     const [date, setTodaysDate] = useState("");
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
     const [currentDate, setCurrentDate] = useState("");
+    const [approvedPeople, getApprovedPeople] = useState("");
+    const [rejectedPeople, SetRejectedPeople] = useState("");
+    const [totalPeople, setTotalEnrollees] = useState("");
 
     const [pendingPA, setPendingPA] = useState([]);
     const [peopleWaiting, setPeopleWaiting] = useState("");
@@ -106,6 +109,11 @@ const ClaimDashboard = () => {
             const data = await response.json();
             console.log("xp", data.result);
 
+            const totalMemberNumbers = new Set(
+                data.result.map((item) => item.MemberNumber),
+            );
+
+            setTotalEnrollees(totalMemberNumbers.size);
             TotalPA(data.result.length);
 
             const validStatuses = [
@@ -267,10 +275,26 @@ const ClaimDashboard = () => {
                 (item) => item.PAStatus.toLowerCase() === "approved",
             );
 
+            const uniqueApprovePeople = new Set(
+                ClaimPending.map((item) => item.MemberNumber),
+            );
+
+            console.log("approvedPeople", uniqueApprovePeople);
+
+            getApprovedPeople(uniqueApprovePeople.size);
+
             console.log("apporved", ClaimPending);
             const DeclinedPA = filteredData.filter(
                 (item) => item.PAStatus.toLowerCase() === "declined",
             );
+
+            const uniqueDeclinedPeople = new Set(
+                DeclinedPA.map((item) => item.MemberNumber),
+            );
+
+            console.log("declined", uniqueDeclinedPeople);
+
+            SetRejectedPeople(uniqueDeclinedPeople.size);
 
             const allPendingPa = [...PendingPA, ...PendingPATwo];
             setPendingPA(allPendingPa);
@@ -302,21 +326,6 @@ const ClaimDashboard = () => {
     const handleSeeAll = () => {
         navigate("/ticket", { state: { filter: "Escalation" } });
     };
-
-    // Dummy data for Escalations
-    const escalations = [
-        {
-            description: "Escalation 1: Issue with the server not responding.",
-        },
-        {
-            description:
-                "Escalation 2: User unable to access their account due to login error.",
-        },
-        {
-            description:
-                "Escalation 3: Critical bug in the production environment affecting users.",
-        },
-    ];
 
     if (error) {
         return (
@@ -371,17 +380,17 @@ const ClaimDashboard = () => {
                     <div className="flex w-full  overflow-y-visible ">
                         <div className=" w-full  flex gap-2 mr-1 ">
                             <div className=" flex-1 bg-bl bg-[#5f5f8c84] w-full h-[17.5rem] rounded-md py-4 px-4">
-                                <p className="text-white  text-[45px] pt-2">
+                                <p className="text-white  text-[30px] pt-2">
                                     {" "}
-                                    Total PA Request
+                                    Total PA Request / Number Of Enrolles
                                 </p>
-                                <h1 className="text-[80px] font-bold pt-[2.5rem]">
-                                    {totalPA}
+                                <h1 className="text-[80px] font-bold pt-[1rem]">
+                                    {totalPA} / {totalPeople}
                                 </h1>
                             </div>
                             <div className=" flex-1 bg-bl bg-[#5f5f8c84] w-full h-[17.5rem] rounded-md py-4 px-4">
                                 <p className="text-white text-[35px]">
-                                    Open Tickets/ number of enrolles
+                                    Open Tickets/ Number Of Enrolles
                                 </p>
                                 <h1 className="text-[80px] font-bold ">
                                     {AuthorisationPending +
@@ -405,20 +414,21 @@ const ClaimDashboard = () => {
                                 className="
                    flex-1 bg-bl  bg-[#5f5f8c84] w-full h-[18.5rem] rounded-md py-4 px-4"
                             >
-                                <p className="text-white text-[55px]">
-                                    Approved PA Requests
+                                <p className="text-white text-[40px]">
+                                    Approved PA Requests/ Number Of Enrolles
                                 </p>
                                 <span className="text-[100px] font-bold">
-                                    {authorizationApprovedClaimPending}
+                                    {authorizationApprovedClaimPending} /{" "}
+                                    {approvedPeople}
                                 </span>
                             </div>
                             <div className="flex-1 bg-bl bg-[#5f5f8c84] w-full h-[18.5rem] rounded-md py-4 px-4">
-                                <p className="text-white text-[55px]">
-                                    Declined PA
+                                <p className="text-white text-[48px]">
+                                    Declined PA/ Number Of Enrolles
                                 </p>
-                                <span className="text-[100px] font-bold">
-                                    {declined}
-                                </span>
+                                <h1 className="text-[100px]  mt-11 font-bold">
+                                    {declined} / {rejectedPeople}
+                                </h1>
                             </div>
                         </div>
                     </div>
