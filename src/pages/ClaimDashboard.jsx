@@ -423,10 +423,10 @@ const ClaimDashboard = () => {
                                 </span>
                             </div>
                             <div className="flex-1 bg-bl bg-[#5f5f8c84] w-full h-[18.5rem] rounded-md py-4 px-4">
-                                <p className="text-white text-[48px]">
-                                    Declined PA/ Number Of Enrolles
+                                <p className="text-white text-[46px]">
+                                    Declined PA / Number Of Enrolles
                                 </p>
-                                <h1 className="text-[100px] mt-2 font-bold">
+                                <h1 className="text-[100px] mt-10  font-bold">
                                     {declined} / {rejectedPeople}
                                 </h1>
                             </div>
