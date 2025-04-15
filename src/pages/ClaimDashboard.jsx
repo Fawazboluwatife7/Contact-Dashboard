@@ -426,7 +426,7 @@ const ClaimDashboard = () => {
                                 <p className="text-white text-[48px]">
                                     Declined PA/ Number Of Enrolles
                                 </p>
-                                <h1 className="text-[100px]  mt-8 font-bold">
+                                <h1 className="text-[100px] mt-2 font-bold">
                                     {declined} / {rejectedPeople}
                                 </h1>
                             </div>
