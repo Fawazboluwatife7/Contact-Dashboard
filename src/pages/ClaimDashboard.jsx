@@ -90,7 +90,7 @@ const ClaimDashboard = () => {
 
             const interval = setInterval(() => {
                 getDailyPA();
-            }, 300000);
+            }, 120000);
 
             return () => clearInterval(interval);
         }
