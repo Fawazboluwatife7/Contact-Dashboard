@@ -36,6 +36,10 @@ const ClaimDashboard = () => {
     const [approvedPeople, getApprovedPeople] = useState("");
     const [rejectedPeople, SetRejectedPeople] = useState("");
     const [totalPeople, setTotalEnrollees] = useState("");
+    const [
+        totalUniqueWaitingEnrolleeOverSevenMinutes,
+        setTotalUniqueWaitingEnrolleeOverSevenMinutes,
+    ] = useState("");
 
     const [pendingPA, setPendingPA] = useState([]);
     const [peopleWaiting, setPeopleWaiting] = useState("");
@@ -250,9 +254,18 @@ const ClaimDashboard = () => {
                     exceedingTimeItems.length,
                 );
 
+                const totalMemberNumbers = new Set(
+                    exceedingTimeItems.map((item) => item.MemberNumber),
+                );
+                setTotalUniqueWaitingEnrolleeOverSevenMinutes(
+                    totalMemberNumbers.size,
+                );
+                console.log("filtered", totalMemberNumbers.size);
+
                 return {
                     items: exceedingTimeItems,
                     totalItems: exceedingTimeItems.length,
+                    uniqueEnrollee: totalMemberNumbers,
                 };
             };
 
@@ -399,11 +412,13 @@ const ClaimDashboard = () => {
                                 </h1>
                             </div>
                             <div className=" flex-1 bg-bl bg-[#5f5f8c84] w-full h-[17.5rem] rounded-md py-4 px-4">
-                                <p className="text-white text-[35px]">
-                                    Pending PA Above Seven Minutes
+                                <p className="text-white text-[30px]">
+                                    Pending PA Above Seven Minutes/ Number Of
+                                    Enrolles
                                 </p>
                                 <h1 className="text-[80px] font-bold ">
-                                    {totalExceedingItems}
+                                    {totalExceedingItems}/{" "}
+                                    {totalUniqueWaitingEnrolleeOverSevenMinutes}
                                 </h1>
                             </div>
                         </div>
@@ -423,7 +438,7 @@ const ClaimDashboard = () => {
                                 </span>
                             </div>
                             <div className="flex-1 bg-bl bg-[#5f5f8c84] w-full h-[18.5rem] rounded-md py-4 px-4">
-                                <p className="text-white text-[46px]">
+                                <p className="text-white text-[40px]">
                                     Declined PA / Number Of Enrolles
                                 </p>
                                 <h1 className="text-[100px] mt-10  font-bold">
