@@ -417,7 +417,7 @@ const ClaimDashboard = () => {
                                     Enrolles
                                 </p>
                                 <h1 className="text-[80px] font-bold ">
-                                    {totalExceedingItems}/{" "}
+                                    {totalExceedingItems} /{" "}
                                     {totalUniqueWaitingEnrolleeOverSevenMinutes}
                                 </h1>
                             </div>
